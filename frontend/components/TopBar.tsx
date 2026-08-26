@@ -28,9 +28,9 @@ export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; 
         </span>
         <div className="flex items-center gap-2 pl-1">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-purple-soft)] text-xs font-semibold text-[var(--color-purple)]">
-            MR
+            SK
           </div>
-          <span className="hidden text-sm font-medium sm:inline">Madhur Rastogi</span>
+          <span className="hidden text-sm font-medium sm:inline">Sriram Kolli</span>
         </div>
       </div>
     </header>

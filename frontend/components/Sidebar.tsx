@@ -63,8 +63,8 @@ export function Sidebar({ collapsed = false }: { collapsed?: boolean }) {
           🏫
         </div>
         <div className="min-w-0">
-          <p className="truncate text-xs font-medium">Delhi Public School</p>
-          <p className="truncate text-[11px] text-[var(--color-text-muted)]">Bokaro Steel City</p>
+          <p className="truncate text-xs font-medium">VedaAI Academy</p>
+          <p className="truncate text-[11px] text-[var(--color-text-muted)]">HQ</p>
         </div>
       </div>
     </aside>
