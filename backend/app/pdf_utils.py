@@ -12,7 +12,7 @@ import fitz  # PyMuPDF
 from PIL import Image
 
 MAX_DIMENSION = 1800  # cap page image size so AI calls stay fast and cheap
-RENDER_DPI = 200
+RENDER_DPI = 90  # Lowered from 200. This cuts PyMuPDF memory usage by ~80% to prevent OOM kills on free tiers
 
 
 def file_to_page_images(file_bytes: bytes, filename: str) -> List[Image.Image]:
