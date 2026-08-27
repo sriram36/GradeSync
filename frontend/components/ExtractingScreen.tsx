@@ -11,50 +11,39 @@ const STAGE_LABELS: Record<string, string> = {
   grading: "Grading and writing feedback…",
 };
 
-const FAKE_LOGS = [
-  "[SYS] Initializing AI models...",
-  "[SYS] Allocating memory buffers for image streams...",
-  "[VISION] Reading PDF page 1 bounding boxes...",
-  "[VISION] Isolating text regions and equations...",
-  "[VISION] Reading PDF page 2 bounding boxes...",
-  "[VISION] Applying OCR to dense text blocks...",
-  "[EXTRACT] Found Question 1... assigning ID q_0",
-  "[EXTRACT] Found Question 2... assigning ID q_1",
-  "[EXTRACT] Found sub-parts in Question 3. Splitting into q_2a, q_2b...",
-  "[EXTRACT] Extracting total marks printed on paper...",
-  "[VISION] Hand-writing model engaged for student sheet...",
-  "[VISION] Tracing ink strokes on page 1...",
-  "[VISION] Tracing ink strokes on page 2...",
-  "[TRANSCRIPT] 'The derivative of x^2 is 2x' -> Confidence 0.98",
-  "[TRANSCRIPT] Found un-labeled diagram... isolating...",
-  "[MAP] Analyzing semantic similarity of answer a_3 to question q_1...",
-  "[MAP] Strong match found. Linking a_3 -> q_1.",
-  "[MAP] Answer a_4 has no clear question. Storing in unmatched...",
-  "[MAP] Resolving out-of-order answers across pages...",
-  "[GRADE] Evaluating logic steps for q_1...",
-  "[GRADE] Final calculation incorrect. Deducting 1 mark.",
-  "[GRADE] Generating personalized feedback...",
-  "[SYS] Compiling final grading report...",
-  "[SYS] Garbage collection complete.",
-  "[SYS] Extraction pipeline successful."
-];
+const STAGE_LOGS: Record<string, string[]> = {
+  uploading: ["[SYS] Receiving file streams...", "[SYS] Verifying PDF integrity..."],
+  converting_pages: ["[SYS] Converting PDF pages to memory buffers...", "[VISION] Preparing image extraction pipeline..."],
+  extracting_questions: ["[VISION] Scanning question paper for bounding boxes...", "[EXTRACT] Applying OCR and grouping sub-parts..."],
+  extracting_answers: ["[VISION] Engaging handwriting transcription models...", "[TRANSCRIPT] Tracing ink strokes and digitizing student answers..."],
+  mapping_answers: ["[MAP] Running semantic similarity matching...", "[MAP] Aligning out-of-order answers to questions..."],
+  grading: ["[GRADE] Evaluating logic and assigning marks...", "[GRADE] Generating personalized feedback...", "[SYS] Compiling final report..."]
+};
 
 export function ExtractingScreen({ stage }: { stage?: string | null }) {
   const [logs, setLogs] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // When the actual backend stage changes, push the relevant logs sequentially
   useEffect(() => {
+    if (!stage || !STAGE_LOGS[stage]) return;
+    
+    const newLogs = STAGE_LOGS[stage];
     let currentIndex = 0;
-    // 60000ms / 25 logs = ~2400ms per log
+    
+    // Push the logs for the current stage one by one to simulate typing/processing
     const interval = setInterval(() => {
-      if (currentIndex < FAKE_LOGS.length) {
-        setLogs(prev => [...prev, FAKE_LOGS[currentIndex]]);
+      if (currentIndex < newLogs.length) {
+        const logToPush = newLogs[currentIndex];
+        setLogs(prev => [...prev, logToPush]);
         currentIndex++;
+      } else {
+        clearInterval(interval);
       }
-    }, 2200);
+    }, 800);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [stage]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -91,7 +80,7 @@ export function ExtractingScreen({ stage }: { stage?: string | null }) {
               </div>
             ))
           )}
-          {logs.length > 0 && logs.length < FAKE_LOGS.length && (
+          {logs.length > 0 && (
             <div className="animate-pulse mt-1 inline-block bg-[#00ff41] w-2 h-3" />
           )}
         </div>

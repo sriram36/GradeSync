@@ -44,8 +44,6 @@ export default function Home() {
       }
 
       // Poll the backend every 2 seconds until the job is done.
-      // We enforce a minimum 20-second wait so the reviewer always has time
-      // to see the cool terminal logs, even if the backend is blazing fast.
       const pollBackend = async () => {
         let result = await getJob(status.job_id);
         while (result.status === "processing") {
@@ -56,8 +54,7 @@ export default function Home() {
         return result;
       };
 
-      const minimumWait = new Promise(resolve => setTimeout(resolve, 20000));
-      const [result] = await Promise.all([pollBackend(), minimumWait]);
+      const result = await pollBackend();
 
       if (result.status === "error") {
         setError(result.error || "Something went wrong while processing your files.");
