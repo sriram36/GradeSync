@@ -42,7 +42,9 @@ def _process_job(job_id: str, qp_bytes: bytes, qp_name: str, as_bytes: bytes, as
     try:
         storage.update_job(job_id, stage="converting_pages")
         qp_images = file_to_page_images(qp_bytes, qp_name)
+        del qp_bytes  # Force free memory
         as_images = file_to_page_images(as_bytes, as_name)
+        del as_bytes  # Force free memory
 
         qp_pages = _save_pages(job_id, "question_paper", qp_images)
         as_pages = _save_pages(job_id, "answer_sheet", as_images)
@@ -52,9 +54,11 @@ def _process_job(job_id: str, qp_bytes: bytes, qp_name: str, as_bytes: bytes, as
 
         storage.update_job(job_id, stage="extracting_questions")
         questions = pipeline.extract_questions(provider, qp_images)
+        del qp_images  # Free massive image list from memory
 
         storage.update_job(job_id, stage="extracting_answers")
         answers = pipeline.extract_answers(provider, as_images)
+        del as_images  # Free massive image list from memory
 
         storage.update_job(job_id, stage="mapping_answers")
         mappings, unmatched = pipeline.map_answers(provider, questions, answers)
