@@ -53,12 +53,3 @@ def _normalize_image_to_dict(img: Image.Image) -> Dict[str, Any]:
         "mime_type": "image/jpeg"
     }
 
-
-def count_pages(file_bytes: bytes, filename: str) -> int:
-    if filename.lower().endswith(".pdf"):
-        doc = fitz.open(stream=file_bytes, filetype="pdf")
-        try:
-            return doc.page_count
-        finally:
-            doc.close()
-    return 1

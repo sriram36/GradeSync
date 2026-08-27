@@ -15,7 +15,7 @@ from .models import JobResult
 _jobs: Dict[str, JobResult] = {}
 _lock = Lock()
 
-# Raw page images (PNG bytes) served back to the frontend for display.
+# Raw page images (JPEG bytes) served back to the frontend for display.
 _page_images: Dict[str, bytes] = {}
 
 

@@ -122,7 +122,7 @@ async def get_page(job_id: str, file_type: str, page: int):
     data = storage.get_page_image(key)
     if data is None:
         raise HTTPException(status_code=404, detail="Page not found")
-    return Response(content=data, media_type="image/png")
+    return Response(content=data, media_type="image/jpeg")
 
 
 @app.get("/api/health")
