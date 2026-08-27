@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { UploadScreen } from "@/components/UploadScreen";
@@ -17,6 +17,13 @@ export default function Home() {
   const [processingStage, setProcessingStage] = useState<string | null>(null);
   const [job, setJob] = useState<JobResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Ping the backend immediately on load to wake up the free tier server
+  // (e.g. Render/Railway cold starts) before the user even hits upload.
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/health`)
+      .catch(() => {}); // silent catch, it's just a wakeup ping
+  }, []);
 
   async function handleStart(questionPaper: File, answerSheet: File) {
     setError(null);
