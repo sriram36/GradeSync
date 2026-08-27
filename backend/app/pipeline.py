@@ -145,12 +145,3 @@ def grade_answers(provider: AIProvider, questions: List[Question], answers: List
 
     return grades
 
-
-def run_pipeline(provider: AIProvider, qp_images: List[Image.Image],
-                  as_images: List[Image.Image]):
-    """Runs the full flow and returns (questions, answers, mappings, unmatched_ids, grades)."""
-    questions = extract_questions(provider, qp_images)
-    answers = extract_answers(provider, as_images)
-    mappings, unmatched_ids = map_answers(provider, questions, answers)
-    grades = grade_answers(provider, questions, answers, mappings)
-    return questions, answers, mappings, unmatched_ids, grades
