@@ -1,15 +1,13 @@
 from __future__ import annotations
 import json
-from typing import List, Tuple
-
-from PIL import Image
+from typing import List, Dict, Tuple, Set
 
 from . import prompts
 from .ai_provider import AIProvider
 from .models import Question, AnswerBlock, Mapping, Grade, BBox
 
 
-def extract_questions(provider: AIProvider, images: List[Image.Image]) -> List[Question]:
+def extract_questions(provider: AIProvider, images: List[dict]) -> List[Question]:
     data = provider.generate_json(
         prompts.QUESTION_EXTRACTION_SYSTEM,
         prompts.QUESTION_EXTRACTION_USER,
@@ -37,7 +35,7 @@ def extract_questions(provider: AIProvider, images: List[Image.Image]) -> List[Q
     return questions
 
 
-def extract_answers(provider: AIProvider, images: List[Image.Image]) -> List[AnswerBlock]:
+def extract_answers(provider: AIProvider, images: List[dict]) -> List[AnswerBlock]:
     data = provider.generate_json(
         prompts.ANSWER_EXTRACTION_SYSTEM,
         prompts.ANSWER_EXTRACTION_USER,

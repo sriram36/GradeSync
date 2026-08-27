@@ -15,9 +15,7 @@ import json
 import os
 import re
 from io import BytesIO
-from typing import List, Optional
-
-from PIL import Image
+from typing import List, Optional, Dict, Any
 
 
 def _extract_json(text: str) -> dict:
@@ -32,7 +30,7 @@ def _extract_json(text: str) -> dict:
 
 class AIProvider:
     def generate_json(self, system_prompt: str, user_prompt: str,
-                       images: Optional[List[Image.Image]] = None) -> dict:
+                       images: Optional[List[Dict[str, Any]]] = None) -> dict:
         raise NotImplementedError
 
 
@@ -41,7 +39,7 @@ class GeminiProvider(AIProvider):
         import google.generativeai as genai
         api_key = os.environ["GEMINI_API_KEY"]
         genai.configure(api_key=api_key)
-        model_name = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+        model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
         self._genai = genai
         self._model = genai.GenerativeModel(
             model_name,
@@ -49,10 +47,10 @@ class GeminiProvider(AIProvider):
         )
 
     def generate_json(self, system_prompt: str, user_prompt: str,
-                       images: Optional[List[Image.Image]] = None) -> dict:
+                       images: Optional[List[Dict[str, Any]]] = None) -> dict:
         parts = [system_prompt + "\n\n" + user_prompt]
         for img in images or []:
-            parts.append(img)
+            parts.append({"mime_type": img["mime_type"], "data": img["bytes"]})
         response = self._model.generate_content(parts)
         return _extract_json(response.text)
 
@@ -68,15 +66,14 @@ class AzureOpenAIProvider(AIProvider):
         self._deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
 
     def generate_json(self, system_prompt: str, user_prompt: str,
-                       images: Optional[List[Image.Image]] = None) -> dict:
+                       images: Optional[List[Dict[str, Any]]] = None) -> dict:
         content = [{"type": "text", "text": user_prompt}]
         for img in images or []:
-            buf = BytesIO()
-            img.save(buf, format="PNG")
-            b64 = base64.b64encode(buf.getvalue()).decode()
+            b64 = base64.b64encode(img["bytes"]).decode()
+            mime = img["mime_type"]
             content.append({
                 "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{b64}"},
+                "image_url": {"url": f"data:{mime};base64,{b64}"},
             })
         response = self._client.chat.completions.create(
             model=self._deployment,

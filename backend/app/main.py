@@ -13,7 +13,7 @@ from fastapi.concurrency import run_in_threadpool
 
 from . import storage, pipeline
 from .ai_provider import get_provider
-from .pdf_utils import file_to_page_images, image_to_png_bytes
+from .pdf_utils import file_to_page_images
 from .models import JobResult, PageImage, JobStatus
 
 app = FastAPI(title="VedaAI Assessment Mapper")
@@ -28,13 +28,13 @@ app.add_middleware(
 )
 
 
-def _save_pages(job_id: str, file_type: str, images) -> list[PageImage]:
+def _save_pages(job_id: str, file_type: str, images: list[dict]) -> list[PageImage]:
     pages = []
     for i, img in enumerate(images):
         key = f"{job_id}:{file_type}:{i}"
-        storage.save_page_image(key, image_to_png_bytes(img))
+        storage.save_page_image(key, img["bytes"])
         pages.append(PageImage(page=i, url=f"/api/jobs/{job_id}/pages/{file_type}/{i}",
-                                width=img.width, height=img.height))
+                                width=img["width"], height=img["height"]))
     return pages
 
 
