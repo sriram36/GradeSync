@@ -73,8 +73,12 @@ export function AnswerSheetViewer({
         ) : (
           <div className="mx-auto" style={{ width: widthStyle, maxWidth: zoom === "fit" ? 900 : "none" }}>
             <div className="relative inline-block w-full overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-sm">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={pageImageUrl(page.url)} alt={`Answer sheet page ${pageIndex + 1}`} className="block w-full" />
+              {pages.map((p, i) => (
+                <div key={p.page} style={{ display: i === pageIndex ? "block" : "none" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={pageImageUrl(p.url)} alt={`Answer sheet page ${i + 1}`} className="block w-full" />
+                </div>
+              ))}
               {boxesOnPage.map((b, i) => (
                 <div
                   key={i}

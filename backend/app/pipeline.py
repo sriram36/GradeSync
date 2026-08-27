@@ -19,7 +19,10 @@ def extract_questions(provider: AIProvider, images: List[Image.Image]) -> List[Q
     for i, q in enumerate(data.get("questions", [])):
         bbox = None
         if q.get("bbox"):
-            bbox = BBox(page=q.get("page", 0), **q["bbox"])
+            try:
+                bbox = BBox(page=q.get("page", 0), **q["bbox"])
+            except Exception:
+                bbox = None
         questions.append(Question(
             id=f"q_{i}",
             number=str(q.get("number", i + 1)),
@@ -42,7 +45,12 @@ def extract_answers(provider: AIProvider, images: List[Image.Image]) -> List[Ans
     )
     blocks: List[AnswerBlock] = []
     for i, a in enumerate(data.get("answer_blocks", [])):
-        bboxes = [BBox(**b) for b in a.get("bboxes", [])]
+        bboxes = []
+        for b in a.get("bboxes", []):
+            try:
+                bboxes.append(BBox(**b))
+            except Exception:
+                pass
         blocks.append(AnswerBlock(
             id=f"a_{i}",
             detected_label=a.get("detected_label"),
@@ -67,13 +75,16 @@ def map_answers(provider: AIProvider, questions: List[Question],
     mapped_question_ids = set()
     mappings: List[Mapping] = []
     for m in data.get("mappings", []):
+        qid = m.get("question_id")
+        if not qid:
+            continue
         mappings.append(Mapping(
-            question_id=m["question_id"],
+            question_id=qid,
             answer_block_id=m.get("answer_block_id"),
             confidence=m.get("confidence", 0.0),
             status=m.get("status", "unanswered"),
         ))
-        mapped_question_ids.add(m["question_id"])
+        mapped_question_ids.add(qid)
 
     # Any question the model didn't mention at all is unanswered.
     for q in questions:
@@ -117,10 +128,18 @@ def grade_answers(provider: AIProvider, questions: List[Question], answers: List
         data = provider.generate_json(prompts.GRADING_SYSTEM, user_prompt)
         for g in data.get("grades", []):
             qid = g.get("question_id")
+            if not qid:
+                continue
             max_marks = max_marks_by_id.get(qid, 5)
+            
+            try:
+                marks_awarded = float(g.get("marks_awarded", 0))
+            except (ValueError, TypeError):
+                marks_awarded = 0.0
+                
             grades.append(Grade(
                 question_id=qid,
-                marks_awarded=min(max(float(g.get("marks_awarded", 0)), 0), max_marks),
+                marks_awarded=min(max(marks_awarded, 0), max_marks),
                 max_marks=max_marks,
                 correct=g.get("correct"),
                 feedback=g.get("feedback", ""),

@@ -11,8 +11,8 @@ from typing import List
 import fitz  # PyMuPDF
 from PIL import Image
 
-MAX_DIMENSION = 1024  # Cap image size strictly to prevent OOM
-RENDER_DPI = 72  # Standard PDF DPI, extremely memory efficient
+MAX_DIMENSION = 1400  # Cap image size strictly to prevent OOM
+RENDER_DPI = 150  # Standard PDF DPI, extremely memory efficient
 
 
 def file_to_page_images(file_bytes: bytes, filename: str) -> List[Image.Image]:
