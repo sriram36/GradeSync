@@ -6,7 +6,7 @@ import traceback
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.concurrency import run_in_threadpool
@@ -89,17 +89,20 @@ def _process_job(job_id: str, qp_bytes: bytes, qp_name: str, as_bytes: bytes, as
 
 
 @app.post("/api/jobs", response_model=JobStatus)
-async def create_job(question_paper: UploadFile = File(...), answer_sheet: UploadFile = File(...)):
+async def create_job(
+    background_tasks: BackgroundTasks,
+    question_paper: UploadFile = File(...),
+    answer_sheet: UploadFile = File(...)
+):
     job_id = uuid.uuid4().hex[:12]
     storage.create_job(job_id)
 
     qp_bytes = await question_paper.read()
     as_bytes = await answer_sheet.read()
 
-    # Runs synchronously (in a threadpool) and the request blocks until done.
-    # Simple and reliable for a single-teacher demo; the frontend shows an
-    # "Extracting..." state for the duration of this call.
-    await run_in_threadpool(
+    # Dispatch to background task immediately. The frontend will poll /api/jobs/{job_id}
+    # to get real-time stage updates instead of hanging on this request.
+    background_tasks.add_task(
         _process_job, job_id, qp_bytes, question_paper.filename or "question_paper.pdf",
         as_bytes, answer_sheet.filename or "answer_sheet.pdf",
     )

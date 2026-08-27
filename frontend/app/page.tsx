@@ -33,7 +33,7 @@ export default function Home() {
         setUploadProgress(pct);
         if (pct >= 100) {
           setStage("extracting");
-          setProcessingStage("extracting_questions");
+          setProcessingStage("converting_pages");
         }
       });
 
@@ -43,12 +43,20 @@ export default function Home() {
         return;
       }
 
-      const result = await getJob(status.job_id);
+      // Poll the backend every 2 seconds until the job is done
+      let result = await getJob(status.job_id);
+      while (result.status === "processing") {
+        setProcessingStage(result.stage || "extracting_questions");
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        result = await getJob(status.job_id);
+      }
+
       if (result.status === "error") {
         setError(result.error || "Something went wrong while processing your files.");
         setStage("error");
         return;
       }
+      
       setJob(result);
       setStage("mapping");
     } catch (err) {

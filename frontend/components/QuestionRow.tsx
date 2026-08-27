@@ -24,7 +24,7 @@ export function QuestionRow({
 
   return (
     <div
-      className={`rounded-xl border transition-colors ${
+      className={`rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
         active ? "border-[var(--color-accent)]" : "border-transparent"
       }`}
     >
