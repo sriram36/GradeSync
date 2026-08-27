@@ -109,7 +109,7 @@ Rules:
 Return ONLY a JSON object of this exact shape, nothing else:
 {{
   "mappings": [
-    {{"question_id": "q_0", "answer_block_id": "a_2", "confidence": 0.92, "status": "answered"}}
+    {{"question_id": "q_0", "reasoning": "Explain step-by-step why this answer matches this question", "answer_block_id": "a_2", "confidence": 0.92, "status": "answered"}}
   ],
   "unmatched_answer_ids": ["a_5"]
 }}
@@ -132,7 +132,7 @@ Return ONLY a JSON object of this exact shape, nothing else, with one entry per 
 same order:
 {{
   "grades": [
-    {{"question_id": "q_0", "marks_awarded": 3, "correct": null, "feedback": "your feedback here"}}
+    {{"question_id": "q_0", "reasoning": "Explain step-by-step how the student's answer compares to the correct logic", "marks_awarded": 3, "correct": null, "feedback": "your feedback here"}}
   ]
 }}
 """
