@@ -51,18 +51,22 @@ def _process_job(job_id: str, qp_bytes: bytes, qp_name: str, as_bytes: bytes, as
         storage.update_job(job_id, question_paper_pages=qp_pages, answer_sheet_pages=as_pages)
 
         provider = get_provider()
+
         import concurrent.futures
+        import gc
+        gc.collect()  # Force garbage collection before parallel spike
+
         storage.update_job(job_id, stage="extracting_questions")
-        
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             future_questions = executor.submit(pipeline.extract_questions, provider, qp_images)
             future_answers = executor.submit(pipeline.extract_answers, provider, as_images)
             
             questions = future_questions.result()
             answers = future_answers.result()
-            
+
         del qp_images
         del as_images
+        gc.collect()  # Clean up immediately
 
         storage.update_job(job_id, stage="mapping_answers")
         mappings, unmatched = pipeline.map_answers(provider, questions, answers)
