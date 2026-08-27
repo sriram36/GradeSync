@@ -41,7 +41,7 @@ class GeminiProvider(AIProvider):
         import google.generativeai as genai
         api_key = os.environ["GEMINI_API_KEY"]
         genai.configure(api_key=api_key)
-        model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        model_name = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
         self._genai = genai
         self._model = genai.GenerativeModel(
             model_name,
