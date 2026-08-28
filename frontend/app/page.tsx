@@ -94,19 +94,37 @@ export default function Home() {
               <UploadScreen onStart={handleStart} uploadProgress={uploadProgress} />
             )}
             {stage === "extracting" && <ExtractingScreen stage={processingStage} />}
-            {stage === "error" && (
-              <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-                <p className="text-lg font-semibold text-[var(--color-error)]">Extraction failed</p>
-                <p className="max-w-md text-sm text-[var(--color-text-muted)]">{error}</p>
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="mt-2 rounded-full bg-[var(--color-text)] px-5 py-2.5 text-sm font-medium text-white"
-                >
+            {stage === "error" && (() => {
+              const isRenderError = error && (
+                error.includes("memory") || error.includes("storage") ||
+                error.includes("500MB") || error.includes("MemoryError") ||
+                error.includes("Server storage") || error.includes("OSError") || error.includes("IOError")
+              );
+              return (
+                <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+                  <p className="text-lg font-semibold text-[var(--color-error)]">Extraction failed</p>
+                  <p className="max-w-md text-sm text-[var(--color-text-muted)]">{error}</p>
+                  {isRenderError && (
+                    <div className="mt-1 max-w-md rounded-xl border border-orange-200 bg-orange-50 p-4 text-left text-xs text-orange-800">
+                      <span className="mb-1 block font-semibold text-orange-900">💡 Free Tier Tip</span>
+                      This backend is hosted on Render's free tier (500MB memory limit). To fix this:
+                      <ul className="mt-1 list-disc pl-4 space-y-1">
+                        <li>Compress your PDF using <b>ilovepdf.com</b> or <b>smallpdf.com</b> before uploading</li>
+                        <li>Try uploading a smaller sample (1–3 pages)</li>
+                        <li>Convert your images to lower resolution before scanning</li>
+                      </ul>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={reset}
+                    className="mt-2 rounded-full bg-[var(--color-text)] px-5 py-2.5 text-sm font-medium text-white"
+                  >
                   Try again
-                </button>
-              </div>
-            )}
+                  </button>
+                </div>
+              );
+            })()}
           </main>
         )}
       </div>

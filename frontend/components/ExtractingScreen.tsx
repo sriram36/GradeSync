@@ -40,7 +40,7 @@ export function ExtractingScreen({ stage }: { stage?: string | null }) {
       } else {
         clearInterval(interval);
       }
-    }, 800);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [stage]);
