@@ -67,6 +67,7 @@ class GeminiProvider(AIProvider):
         for img in images or []:
             parts.append({"mime_type": img["mime_type"], "data": img["bytes"]})
             
+        retry_504 = 0
         while self.current_key_idx < len(self.keys):
             try:
                 response = self._model.generate_content(parts)
@@ -82,8 +83,9 @@ class GeminiProvider(AIProvider):
                 else:
                     raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
             except Exception as e:
+                error_str = str(e)
                 # Also catch generic 429 in case google-generativeai wraps it weirdly
-                if "429" in str(e):
+                if "429" in error_str:
                     print(f"[WARN] API Key at index {self.current_key_idx} exhausted (generic 429). Rotating...")
                     self.current_key_idx += 1
                     if self.current_key_idx < len(self.keys):
@@ -92,6 +94,15 @@ class GeminiProvider(AIProvider):
                         continue
                     else:
                         raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
+                # Catch 504 Deadline Exceeded (Google servers overloaded)
+                elif "504" in error_str or "Deadline" in error_str:
+                    retry_504 += 1
+                    if retry_504 > 3:
+                        raise Exception("Google API repeatedly timed out (504 Deadline Exceeded). Their servers are too busy. Please try again later.")
+                    print(f"[WARN] API 504 Timeout. Retrying ({retry_504}/3)...")
+                    time.sleep(2)
+                    continue
+                    
                 raise e # For all other errors, bubble up to main.py
         
         raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
