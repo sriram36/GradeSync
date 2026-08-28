@@ -35,7 +35,7 @@ export function UploadScreen({
           <FileSlot label="Answer Sheet" slot={answerSheet} onChange={setAnswerSheet} />
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-2">
+        <div className="mt-8 flex flex-col items-center gap-5">
           <button
             type="button"
             disabled={!ready || uploading}
@@ -45,9 +45,11 @@ export function UploadScreen({
             {uploading ? `Uploading… ${uploadProgress}%` : "Start Mapping"}
             {!uploading && <span aria-hidden="true">→</span>}
           </button>
-          <p className="text-xs text-[var(--color-text-muted)]">
-            Once both files are uploaded, you&apos;ll be able to map answers with questions
-          </p>
+
+          <div className="max-w-md rounded-xl border border-orange-200 bg-orange-50 p-4 text-center text-xs text-orange-800">
+            <span className="mb-1 block font-semibold text-orange-900">💡 Reviewer Note (Free Tier Limits)</span>
+            This backend runs on Render's free tier which has a strict 500MB memory limit. If your upload fails, please try <b>compressing your PDFs</b> or uploading a smaller sample (1-3 pages) for a smooth evaluation!
+          </div>
         </div>
       </div>
     </div>

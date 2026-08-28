@@ -37,22 +37,64 @@ class AIProvider:
 class GeminiProvider(AIProvider):
     def __init__(self):
         import google.generativeai as genai
-        api_key = os.environ["GEMINI_API_KEY"]
-        genai.configure(api_key=api_key)
-        model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        
+        # Load multiple keys if provided, else fallback to single key
+        keys_str = os.environ.get("GEMINI_API_KEYS", os.environ.get("GEMINI_API_KEY", ""))
+        self.keys = [k.strip() for k in keys_str.split(",") if k.strip()]
+        if not self.keys:
+            raise ValueError("No Gemini API keys found. Set GEMINI_API_KEYS in .env")
+            
+        self.current_key_idx = 0
         self._genai = genai
-        self._model = genai.GenerativeModel(
-            model_name,
+        self._model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        
+        # Configure with the first key initially
+        self._configure_current_key()
+
+    def _configure_current_key(self):
+        self._genai.configure(api_key=self.keys[self.current_key_idx])
+        self._model = self._genai.GenerativeModel(
+            self._model_name,
             generation_config={"response_mime_type": "application/json"},
         )
 
     def generate_json(self, system_prompt: str, user_prompt: str,
                        images: Optional[List[Dict[str, Any]]] = None) -> dict:
+        import time
+        from google.api_core.exceptions import ResourceExhausted
+        
         parts = [system_prompt + "\n\n" + user_prompt]
         for img in images or []:
             parts.append({"mime_type": img["mime_type"], "data": img["bytes"]})
-        response = self._model.generate_content(parts)
-        return _extract_json(response.text)
+            
+        while self.current_key_idx < len(self.keys):
+            try:
+                response = self._model.generate_content(parts)
+                return _extract_json(response.text)
+            except ResourceExhausted:
+                # 429 Quota Exceeded / Rate Limit reached for this key.
+                print(f"[WARN] API Key at index {self.current_key_idx} exhausted. Rotating...")
+                self.current_key_idx += 1
+                if self.current_key_idx < len(self.keys):
+                    self._configure_current_key()
+                    time.sleep(1) # tiny backoff before retry
+                    continue
+                else:
+                    raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
+            except Exception as e:
+                # Also catch generic 429 in case google-generativeai wraps it weirdly
+                if "429" in str(e):
+                    print(f"[WARN] API Key at index {self.current_key_idx} exhausted (generic 429). Rotating...")
+                    self.current_key_idx += 1
+                    if self.current_key_idx < len(self.keys):
+                        self._configure_current_key()
+                        time.sleep(1)
+                        continue
+                    else:
+                        raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
+                raise e # For all other errors, bubble up to main.py
+        
+        raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
 
 
 class AzureOpenAIProvider(AIProvider):

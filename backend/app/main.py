@@ -85,7 +85,18 @@ def _process_job(job_id: str, qp_bytes: bytes, qp_name: str, as_bytes: bytes, as
         )
     except Exception as exc:  # noqa: BLE001 - surface any failure to the frontend
         traceback.print_exc()
-        storage.update_job(job_id, status="error", error=str(exc))
+        
+        error_msg = str(exc)
+        
+        # Intercept common deployment constraints (e.g. Render free tier)
+        if isinstance(exc, (MemoryError, OSError, IOError)):
+            error_msg = f"Server storage or memory limit reached: {exc}. If hosting on Render free tier, try smaller images."
+        elif "ResourceExhausted" in error_msg or "429" in error_msg:
+            error_msg = "API Rate Limit Exceeded (429). All AI keys are currently exhausted. Please wait a moment and try again."
+        elif "503" in error_msg or "500" in error_msg:
+            error_msg = "AI Provider is temporarily overloaded (500/503). Please try again in a few minutes."
+            
+        storage.update_job(job_id, status="error", error=error_msg)
 
 
 @app.post("/api/jobs", response_model=JobStatus)
