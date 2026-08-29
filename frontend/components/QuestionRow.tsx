@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, TriangleAlert } from "lucide-react";
 import type { Grade, Mapping, Question } from "@/lib/types";
 import { formatMarks, marksTone, toneClasses } from "@/lib/grading";
 import { Sparkle } from "./Sparkle";
@@ -11,6 +12,8 @@ export function QuestionRow({
   expanded,
   active,
   onSelect,
+  badgeLabel,
+  indent = false,
 }: {
   question: Question;
   grade: Grade | undefined;
@@ -18,13 +21,18 @@ export function QuestionRow({
   expanded: boolean;
   active: boolean;
   onSelect: () => void;
+  /** Override what's shown in the round badge - used for sub-parts, which
+   * show just "a." rather than repeating the parent number. */
+  badgeLabel?: string;
+  /** Sub-part rows are indented under their parent number. */
+  indent?: boolean;
 }) {
   const tone = marksTone(grade);
   const unanswered = !mapping || mapping.status === "unanswered";
 
   return (
     <div
-      className={`rounded-xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
+      className={`rounded-xl border transition-colors ${indent ? "ml-8" : ""} ${
         active ? "border-[var(--color-accent)]" : "border-transparent"
       }`}
     >
@@ -35,27 +43,29 @@ export function QuestionRow({
           active ? "bg-[var(--color-accent-soft)]" : ""
         }`}
       >
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--color-purple-soft)] text-xs font-semibold text-[var(--color-purple)]">
-          {question.display_label}
+        <span
+          className={`grid shrink-0 place-items-center rounded-full bg-[var(--color-purple-soft)] font-semibold text-[var(--color-purple)] ${
+            indent ? "h-6 w-6 text-[11px]" : "h-7 w-7 text-xs"
+          }`}
+        >
+          {badgeLabel ?? question.display_label}
         </span>
         <span className="min-w-0 flex-1 truncate text-sm">
           {question.text}
         </span>
         {unanswered ? (
-          <span className="shrink-0 rounded-full bg-[var(--color-bg)] px-2.5 py-1 text-xs font-medium text-[var(--color-text-muted)]">
-            Not answered
+          <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${toneClasses.error}`}>
+            {question.max_marks != null ? `0/${question.max_marks}` : "0"}
           </span>
         ) : (
           <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${toneClasses[tone]}`}>
             {formatMarks(grade)}
           </span>
         )}
-        <span
+        <ChevronDown
+          size={16}
           className={`shrink-0 text-[var(--color-text-muted)] transition-transform ${expanded ? "rotate-180" : ""}`}
-          aria-hidden="true"
-        >
-          ⌄
-        </span>
+        />
       </button>
 
       {expanded && (
@@ -77,8 +87,9 @@ export function QuestionRow({
             </div>
           )}
           {mapping?.status === "low_confidence" && (
-            <p className="text-xs text-[var(--color-error)]">
-              ⚠ This match looks uncertain - worth a manual check.
+            <p className="flex items-center gap-1 text-xs text-[var(--color-error)]">
+              <TriangleAlert size={13} />
+              This match looks uncertain - worth a manual check.
             </p>
           )}
         </div>

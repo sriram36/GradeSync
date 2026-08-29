@@ -7,16 +7,21 @@ import { UploadScreen } from "@/components/UploadScreen";
 import { ExtractingScreen } from "@/components/ExtractingScreen";
 import { MappingScreen } from "@/components/MappingScreen";
 import { createJob, getJob } from "@/lib/api";
-import type { JobResult } from "@/lib/types";
+import { JobResult, JobStatus } from "@/lib/api";
 
 type Stage = "upload" | "extracting" | "mapping" | "error";
 
 export default function Home() {
-  const [stage, setStage] = useState<Stage>("upload");
+  const [stage, setStage] = useState<"upload" | "extracting" | "mapping" | "error">("upload");
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  
+  // Which specific stage of extraction are we currently in?
   const [processingStage, setProcessingStage] = useState<string | null>(null);
   const [job, setJob] = useState<JobResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [manualCollapsed, setManualCollapsed] = useState<boolean | null>(null);
+
+  const sidebarCollapsed = manualCollapsed ?? stage !== "upload";
 
   // Ping the backend immediately on load to wake up the free tier server
   // (e.g. Render/Railway cold starts) before the user even hits upload.
@@ -80,7 +85,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-[var(--color-bg)]">
-      <Sidebar collapsed={stage !== "upload"} />
+      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setManualCollapsed(!sidebarCollapsed)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar onBack={stage !== "upload" ? reset : undefined} />
 

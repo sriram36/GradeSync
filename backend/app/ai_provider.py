@@ -46,7 +46,7 @@ class GeminiProvider(AIProvider):
             
         self.current_key_idx = 0
         self._genai = genai
-        self._model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        self._model_name = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
         
         # Configure with the first key initially
         self._configure_current_key()

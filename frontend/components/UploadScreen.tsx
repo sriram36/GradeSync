@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { FileSlot, SlotFile } from "./FileSlot";
+import { IllustrationBadge } from "./IllustrationBadge";
 
 export function UploadScreen({
   onStart,
@@ -17,17 +19,24 @@ export function UploadScreen({
   const uploading = uploadProgress !== null;
 
   return (
-    <div className="mx-auto w-full max-w-2xl py-10 md:py-14">
-      <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 md:p-10">
-        <h1 className="text-xl font-semibold md:text-2xl">
-          Upload <span className="text-[var(--color-accent)]">Question Paper &amp; Answer Sheets</span>
+    <div
+      className="flex min-h-full flex-1 items-center justify-center py-10"
+      style={{
+        background:
+          "radial-gradient(60% 50% at 50% 30%, rgba(255,255,255,0.9) 0%, rgba(247,247,248,0) 100%)",
+      }}
+    >
+      <div className="mx-auto w-full max-w-xl text-center">
+        <h1 className="text-xl font-bold leading-snug md:text-2xl">
+          Upload{" "}
+          <span className="inline-block rounded-lg bg-[var(--color-accent-soft)] px-1.5 py-0.5 text-[var(--color-accent)] underline decoration-2 underline-offset-4">
+            Question Paper &amp; Answer Sheets
+          </span>
         </h1>
-        <p className="mt-1 text-sm text-[var(--color-text-muted)]">Upload both files to get started</p>
+        <p className="mt-3 text-sm text-[var(--color-text-muted)]">Upload both files to get started</p>
 
         <div className="my-8 flex justify-center">
-          <div className="grid h-20 w-20 place-items-center rounded-full bg-[var(--color-accent-soft)] text-3xl">
-            👩‍🏫
-          </div>
+          <IllustrationBadge />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -40,10 +49,14 @@ export function UploadScreen({
             type="button"
             disabled={!ready || uploading}
             onClick={() => ready && onStart(questionPaper!.file, answerSheet!.file)}
-            className="flex items-center gap-2 rounded-full bg-[var(--color-text)] px-6 py-3 text-sm font-medium text-white transition-opacity disabled:opacity-30"
+            className={`flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-colors ${
+              ready && !uploading
+                ? "bg-[var(--color-text)] text-white"
+                : "cursor-not-allowed bg-[#e3e3e6] text-[#a6a6ad]"
+            }`}
           >
             {uploading ? `Uploading… ${uploadProgress}%` : "Start Mapping"}
-            {!uploading && <span aria-hidden="true">→</span>}
+            {!uploading && <ArrowRight size={16} />}
           </button>
           <p className="text-xs text-[var(--color-text-muted)]">
             Once both files are uploaded, you&apos;ll be able to map answers with questions

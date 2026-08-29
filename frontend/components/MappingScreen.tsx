@@ -36,22 +36,24 @@ export function MappingScreen({ job }: { job: JobResult }) {
 
   return (
     <div className="flex h-full flex-1 flex-col">
-      {/* Mobile tab switch */}
-      <div className="flex border-b border-[var(--color-border)] md:hidden">
-        {(["questions", "answer_sheet"] as const).map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setMobileTab(tab)}
-            className={`flex-1 border-b-2 py-3 text-sm font-medium ${
-              mobileTab === tab
-                ? "border-[var(--color-accent)] text-[var(--color-accent)]"
-                : "border-transparent text-[var(--color-text-muted)]"
-            }`}
-          >
-            {tab === "questions" ? "Questions" : "Answer Sheet"}
-          </button>
-        ))}
+      {/* Mobile tab switch - segmented pill control matching the Figma reference */}
+      <div className="border-b border-[var(--color-border)] p-3 md:hidden">
+        <div className="flex gap-1 rounded-full bg-[var(--color-bg)] p-1">
+          {(["questions", "answer_sheet"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setMobileTab(tab)}
+              className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
+                mobileTab === tab
+                  ? "bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm"
+                  : "text-[var(--color-text-muted)]"
+              }`}
+            >
+              {tab === "questions" ? "Questions" : "Answer Sheet"}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">

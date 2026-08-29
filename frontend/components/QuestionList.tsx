@@ -1,8 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Search, CircleHelp } from "lucide-react";
 import type { AnswerBlock, Grade, JobResult, Question } from "@/lib/types";
 import { QuestionRow } from "./QuestionRow";
+
+function groupByNumber(questions: Question[]): Question[][] {
+  const groups: Question[][] = [];
+  for (const q of questions) {
+    const last = groups[groups.length - 1];
+    if (last && last[0].number === q.number) {
+      last.push(q);
+    } else {
+      groups.push([q]);
+    }
+  }
+  return groups;
+}
 
 export function QuestionList({
   job,
@@ -44,31 +58,33 @@ export function QuestionList({
     .sort((a, b) => a.order_index - b.order_index)
     .filter((q) => q.text.toLowerCase().includes(query.toLowerCase()) || q.display_label.includes(query));
 
+  const groups = groupByNumber(questions);
   const answeredCount = job.mappings.filter((m) => m.status !== "unanswered").length;
 
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-[var(--color-border)] p-4">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">Extracted Questions <span className="font-normal text-[var(--color-text-muted)]">(from question paper)</span></h2>
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <div className="flex flex-1 items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5">
-            <span aria-hidden="true" className="text-[var(--color-text-muted)]">🔍</span>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search questions"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--color-text-muted)]"
-            />
-          </div>
+          <h2 className="text-sm font-semibold">
+            Extracted Questions{" "}
+            <span className="font-normal text-[var(--color-text-muted)]">(from question paper)</span>
+          </h2>
           <button
             type="button"
             onClick={() => setExpandAll((v) => !v)}
-            className="shrink-0 rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--color-bg)]"
+            className="shrink-0 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
           >
             {expandAll ? "Collapse All" : "Expand All"}
           </button>
+        </div>
+        <div className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5">
+          <Search size={14} className="text-[var(--color-text-muted)]" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search questions"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--color-text-muted)]"
+          />
         </div>
 
         <div className="mt-3 flex items-center justify-between rounded-lg bg-[var(--color-bg)] px-3 py-2 text-xs">
@@ -83,17 +99,43 @@ export function QuestionList({
       </div>
 
       <div className="flex-1 space-y-1 overflow-y-auto p-2">
-        {questions.map((q: Question) => (
-          <QuestionRow
-            key={q.id}
-            question={q}
-            grade={gradeByQ.get(q.id)}
-            mapping={mappingByQ.get(q.id)}
-            expanded={expandAll || activeId === q.id}
-            active={activeId === q.id}
-            onSelect={() => onSelectQuestion(q.id)}
-          />
-        ))}
+        {groups.map((group) => {
+          const hasSubParts = group.length > 1 || !!group[0].sub_part;
+          if (!hasSubParts) {
+            const q = group[0];
+            return (
+              <QuestionRow
+                key={q.id}
+                question={q}
+                grade={gradeByQ.get(q.id)}
+                mapping={mappingByQ.get(q.id)}
+                expanded={expandAll || activeId === q.id}
+                active={activeId === q.id}
+                onSelect={() => onSelectQuestion(q.id)}
+              />
+            );
+          }
+          return (
+            <div key={group[0].number} className="space-y-1">
+              <p className="px-3 pt-2 text-xs font-semibold text-[var(--color-text-muted)]">
+                {group[0].number}
+              </p>
+              {group.map((q) => (
+                <QuestionRow
+                  key={q.id}
+                  question={q}
+                  grade={gradeByQ.get(q.id)}
+                  mapping={mappingByQ.get(q.id)}
+                  expanded={expandAll || activeId === q.id}
+                  active={activeId === q.id}
+                  onSelect={() => onSelectQuestion(q.id)}
+                  badgeLabel={q.sub_part ? `${q.sub_part}.` : q.display_label}
+                  indent
+                />
+              ))}
+            </div>
+          );
+        })}
 
         {unmatched.length > 0 && (
           <div className="mt-4 border-t border-[var(--color-border)] pt-3">
@@ -112,8 +154,8 @@ export function QuestionList({
                   activeId === a.id ? "bg-[var(--color-accent-soft)]" : ""
                 }`}
               >
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--color-error-soft)] text-[10px] font-semibold text-[var(--color-error)]">
-                  ?
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--color-error-soft)] text-[var(--color-error)]">
+                  <CircleHelp size={13} />
                 </span>
                 <span className="truncate text-[var(--color-text-muted)]">
                   {a.detected_label ? `"${a.detected_label}" — ` : ""}

@@ -74,7 +74,7 @@ pixel-perfect in every case.
 
 ## AI model / API used
 
-**Google Gemini 2.5 Flash**, via the free tier at
+**Google Gemini  Flash**, via the free tier at
 [aistudio.google.com](https://aistudio.google.com/apikey). Chosen because it
 has a genuinely free tier with no billing/provisioning gate, handles
 multi-page PDFs and images natively in one call, and returns structured

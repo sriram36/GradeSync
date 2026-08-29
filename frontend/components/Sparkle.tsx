@@ -1,4 +1,12 @@
-export function Sparkle({ className = "", size = 20 }: { className?: string; size?: number }) {
+export function Sparkle({
+  className = "",
+  size = 20,
+  style,
+}: {
+  className?: string;
+  size?: number;
+  style?: React.CSSProperties;
+}) {
   return (
     <svg
       width={size}
@@ -6,6 +14,7 @@ export function Sparkle({ className = "", size = 20 }: { className?: string; siz
       viewBox="0 0 24 24"
       fill="none"
       className={className}
+      style={style}
       aria-hidden="true"
     >
       <path

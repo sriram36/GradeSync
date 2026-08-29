@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import type { BBox, PageImage } from "@/lib/types";
 import { pageImageUrl } from "@/lib/api";
 
-const ZOOM_LEVELS = [50, 75, 100, 125, 150];
+const ZOOM_MIN = 50;
+const ZOOM_MAX = 200;
+const ZOOM_STEP = 25;
 
 export function AnswerSheetViewer({
   pages,
@@ -21,7 +24,7 @@ export function AnswerSheetViewer({
    * jump to the first page containing the new selection's answer. */
   selectionKey: string;
 }) {
-  const [zoom, setZoom] = useState<number | "fit">("fit");
+  const [zoom, setZoom] = useState(100);
 
   const pagesWithAnswer = useMemo(
     () => Array.from(new Set(bboxes.map((b) => b.page))).sort((a, b) => a - b),
@@ -43,25 +46,57 @@ export function AnswerSheetViewer({
 
   const page = pages[pageIndex];
   const boxesOnPage = bboxes.filter((b) => b.page === pageIndex);
-  const widthStyle = zoom === "fit" ? "100%" : `${zoom}%`;
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
         <h2 className="text-sm font-semibold">Answer Sheet</h2>
-        <div className="flex items-center gap-2">
-          <select
-            value={zoom}
-            onChange={(e) => setZoom(e.target.value === "fit" ? "fit" : Number(e.target.value))}
-            className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-xs"
-          >
-            <option value="fit">Fit Page</option>
-            {ZOOM_LEVELS.map((z) => (
-              <option key={z} value={z}>
-                {z}%
-              </option>
-            ))}
-          </select>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] px-1 py-1">
+            <button
+              type="button"
+              aria-label="Zoom out"
+              onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
+              className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+            >
+              <Minus size={13} />
+            </button>
+            <span className="w-10 text-center text-xs font-medium">{zoom}%</span>
+            <button
+              type="button"
+              aria-label="Zoom in"
+              onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
+              className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+            >
+              <Plus size={13} />
+            </button>
+          </div>
+
+          {pages.length > 1 && (
+            <div className="flex items-center gap-1 text-xs">
+              <button
+                type="button"
+                aria-label="Previous page"
+                disabled={pageIndex === 0}
+                onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+                className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)] disabled:opacity-30"
+              >
+                <ChevronLeft size={15} />
+              </button>
+              <span className="whitespace-nowrap font-medium">
+                Page {pageIndex + 1} of {pages.length}
+              </span>
+              <button
+                type="button"
+                aria-label="Next page"
+                disabled={pageIndex === pages.length - 1}
+                onClick={() => setPageIndex((p) => Math.min(pages.length - 1, p + 1))}
+                className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)] disabled:opacity-30"
+              >
+                <ChevronRight size={15} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -71,18 +106,14 @@ export function AnswerSheetViewer({
             {emptyMessage || "No page to display"}
           </p>
         ) : (
-          <div className="mx-auto" style={{ width: widthStyle, maxWidth: zoom === "fit" ? 900 : "none" }}>
+          <div className="mx-auto" style={{ width: `${zoom}%`, maxWidth: 1100, minWidth: 280 }}>
             <div className="relative inline-block w-full overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-sm">
-              {pages.map((p, i) => (
-                <div key={p.page} style={{ display: i === pageIndex ? "block" : "none" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={pageImageUrl(p.url)} alt={`Answer sheet page ${i + 1}`} className="block w-full" />
-                </div>
-              ))}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={pageImageUrl(page.url)} alt={`Answer sheet page ${pageIndex + 1}`} className="block w-full" />
               {boxesOnPage.map((b, i) => (
                 <div
                   key={i}
-                  className="absolute rounded-sm border-2 border-[var(--color-accent)] bg-[var(--color-accent)]/10"
+                  className="absolute rounded-sm border-2 border-[var(--color-purple)] bg-[var(--color-purple)]/10"
                   style={{
                     left: `${b.x * 100}%`,
                     top: `${b.y * 100}%`,
@@ -91,7 +122,7 @@ export function AnswerSheetViewer({
                   }}
                 >
                   {label && (
-                    <span className="absolute -top-6 left-0 rounded-md bg-[var(--color-accent)] px-1.5 py-0.5 text-[11px] font-semibold text-white">
+                    <span className="absolute -top-6 left-0 rounded-md bg-[var(--color-purple)] px-1.5 py-0.5 text-[11px] font-semibold text-white">
                       {label}
                     </span>
                   )}
@@ -112,37 +143,13 @@ export function AnswerSheetViewer({
               onClick={() => setPageIndex(p)}
               className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                 p === pageIndex
-                  ? "bg-[var(--color-accent)] text-white"
-                  : "bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-accent-soft)]"
+                  ? "bg-[var(--color-purple)] text-white"
+                  : "bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-purple-soft)]"
               }`}
             >
               Page {p + 1}
             </button>
           ))}
-        </div>
-      )}
-
-      {pages.length > 1 && pagesWithAnswer.length <= 1 && (
-        <div className="flex items-center justify-center gap-3 border-t border-[var(--color-border)] p-3 text-xs">
-          <button
-            type="button"
-            disabled={pageIndex === 0}
-            onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-            className="rounded-full px-2 py-1 hover:bg-[var(--color-bg)] disabled:opacity-30"
-          >
-            ← Prev
-          </button>
-          <span className="text-[var(--color-text-muted)]">
-            Page {pageIndex + 1} of {pages.length}
-          </span>
-          <button
-            type="button"
-            disabled={pageIndex === pages.length - 1}
-            onClick={() => setPageIndex((p) => Math.min(pages.length - 1, p + 1))}
-            className="rounded-full px-2 py-1 hover:bg-[var(--color-bg)] disabled:opacity-30"
-          >
-            Next →
-          </button>
         </div>
       )}
     </div>

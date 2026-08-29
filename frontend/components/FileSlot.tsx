@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Upload, X, FileText, Image as ImageIcon } from "lucide-react";
 import { estimatePdfPageCount } from "@/lib/pdfPageCount";
 
 const ACCEPT = ".pdf,.png,.jpg,.jpeg";
@@ -36,12 +37,17 @@ export function FileSlot({
   }
 
   if (slot) {
+    const isPdf = slot.file.name.toLowerCase().endsWith(".pdf");
     return (
-      <div className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--color-error-soft)] text-[var(--color-error)] text-xs font-bold">
-          {slot.file.name.toLowerCase().endsWith(".pdf") ? "PDF" : "IMG"}
+      <div className="relative flex items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg text-white ${
+            isPdf ? "bg-[var(--color-error)]" : "bg-[var(--color-purple)]"
+          }`}
+        >
+          {isPdf ? <FileText size={18} /> : <ImageIcon size={18} />}
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 text-left">
           <p className="truncate text-sm font-medium">{slot.file.name}</p>
           <p className="text-xs text-[var(--color-text-muted)]">
             {(slot.file.size / (1024 * 1024)).toFixed(1)}MB
@@ -52,9 +58,9 @@ export function FileSlot({
           type="button"
           aria-label={`Remove ${label}`}
           onClick={() => onChange(null)}
-          className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-error-soft)] hover:text-[var(--color-error)]"
+          className="absolute -right-2 -top-2 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#3a3a3f] text-white shadow-sm hover:bg-[var(--color-error)]"
         >
-          ✕
+          <X size={13} />
         </button>
       </div>
     );
@@ -83,7 +89,7 @@ export function FileSlot({
         }`}
       >
         <span className="grid h-9 w-9 place-items-center rounded-lg bg-[var(--color-bg)] text-[var(--color-text-muted)]">
-          ↑
+          <Upload size={16} />
         </span>
         <span className="text-sm">
           Upload <span className="font-semibold text-[var(--color-accent)]">{label}</span>
