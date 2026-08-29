@@ -8,9 +8,9 @@ a question is selected, and grades each answer with AI feedback.
 
 ## Live demo
 
-- **App:** _fill in after deploying to Vercel_
-- **API:** _fill in after deploying to Render_
-- **Repo:** _fill in after pushing to GitHub_
+- **App:** https://vedaai-assignment-one.vercel.app
+- **API:** https://vedaai-assignment-su68.onrender.com
+- **Repo:** https://github.com/sriram36/GradeSync
 
 ## Approach
 
@@ -74,7 +74,7 @@ pixel-perfect in every case.
 
 ## AI model / API used
 
-**Google Gemini  Flash**, via the free tier at
+**Google Gemini 3.6 Flash** (`gemini-3.6-flash`), via the free tier at
 [aistudio.google.com](https://aistudio.google.com/apikey). Chosen because it
 has a genuinely free tier with no billing/provisioning gate, handles
 multi-page PDFs and images natively in one call, and returns structured
@@ -165,11 +165,7 @@ Open http://localhost:3000. The frontend expects the backend at
 - No database or auth, per the assignment spec - each job lives in server
   memory and is lost on restart. Fine for a single-teacher demo session,
   not for production multi-user use.
-- Processing is synchronous: the upload request blocks until the full
-  extract → map → grade pipeline finishes (the frontend shows the
-  "Extracting…" screen for that duration). Simple and reliable for a demo;
-  a production version would move this to a background job with polling or
-  websockets.
+- Processing uses a background task with frontend polling: the upload request returns immediately and the frontend polls `/api/jobs/{id}` every 2 seconds to get live stage updates (converting → extracting → mapping → grading). A production version could replace polling with WebSockets for lower latency.
 - Bounding boxes come directly from the vision model's spatial grounding,
   not from a dedicated OCR engine - generally accurate but not
   pixel-perfect on every page, especially with cramped or overlapping
