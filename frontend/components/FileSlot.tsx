@@ -39,29 +39,31 @@ export function FileSlot({
   if (slot) {
     const isPdf = slot.file.name.toLowerCase().endsWith(".pdf");
     return (
-      <div className="relative flex items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <div
-          className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg text-white ${
-            isPdf ? "bg-[var(--color-error)]" : "bg-[var(--color-purple)]"
-          }`}
-        >
-          {isPdf ? <span className="text-[10px] font-bold">PDF</span> : <ImageIcon size={18} />}
+      <div className="flex w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-6 sm:p-8">
+        <div className="relative flex items-center gap-3 rounded-2xl bg-black/5 p-3 pr-8 w-full max-w-sm">
+          <div
+            className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg text-white ${
+              isPdf ? "bg-[var(--color-error)]" : "bg-[var(--color-purple)]"
+            }`}
+          >
+            {isPdf ? <span className="text-[10px] font-bold">PDF</span> : <ImageIcon size={18} />}
+          </div>
+          <div className="min-w-0 flex-1 text-left">
+            <p className="truncate text-sm font-semibold">{slot.file.name}</p>
+            <p className="text-xs text-[var(--color-text-muted)]">
+              {(slot.file.size / (1024 * 1024)).toFixed(0)}MB
+              {slot.pages ? ` • ${slot.pages} Page${slot.pages > 1 ? "s" : ""}` : ""}
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label={`Remove ${label}`}
+            onClick={() => onChange(null)}
+            className="absolute -right-2 -top-2 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#4b4b4b] text-white shadow-sm hover:bg-[var(--color-error)]"
+          >
+            <X size={12} />
+          </button>
         </div>
-        <div className="min-w-0 flex-1 text-left">
-          <p className="truncate text-sm font-medium">{slot.file.name}</p>
-          <p className="text-xs text-[var(--color-text-muted)]">
-            {(slot.file.size / (1024 * 1024)).toFixed(1)}MB
-            {slot.pages ? ` • ${slot.pages} Page${slot.pages > 1 ? "s" : ""}` : ""}
-          </p>
-        </div>
-        <button
-          type="button"
-          aria-label={`Remove ${label}`}
-          onClick={() => onChange(null)}
-          className="absolute -right-2 -top-2 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#3a3a3f] text-white shadow-sm hover:bg-[var(--color-error)]"
-        >
-          <X size={13} />
-        </button>
       </div>
     );
   }
