@@ -7,9 +7,9 @@ export function marksTone(grade: Grade | undefined): "success" | "error" | "mute
 }
 
 export const toneClasses: Record<"success" | "error" | "muted", string> = {
-  success: "bg-[var(--color-success-soft)] text-[var(--color-success)]",
-  error: "bg-[var(--color-error-soft)] text-[var(--color-error)]",
-  muted: "bg-[var(--color-bg)] text-[var(--color-text-muted)]",
+  success: "bg-[#e6f4ea] text-[#1e8e3e]",
+  error: "bg-[#fce8e6] text-[#d93025]",
+  muted: "bg-[#f1f3f4] text-[#5f6368]",
 };
 
 export function formatMarks(grade: Grade | undefined): string {

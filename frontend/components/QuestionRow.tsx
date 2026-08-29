@@ -86,7 +86,7 @@ export function QuestionRow({
             </p>
           )}
           {grade && (
-            <div className="mt-3 rounded-xl border border-[var(--color-accent)] bg-[#fff1ec] p-3">
+            <div className="mt-3">
               <div className="mb-1 text-sm font-bold text-[var(--color-text)]">
                 AI Feedback
               </div>

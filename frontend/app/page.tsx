@@ -85,9 +85,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-[var(--color-bg)]">
-      {stage === "upload" && (
-        <Sidebar collapsed={sidebarCollapsed} onToggle={() => setManualCollapsed(!sidebarCollapsed)} />
-      )}
+      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setManualCollapsed(!sidebarCollapsed)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar onBack={stage !== "upload" ? reset : undefined} />
 
@@ -96,7 +94,7 @@ export default function Home() {
             <MappingScreen job={job} />
           </div>
         ) : (
-          <main className="flex min-h-0 flex-1 flex-col overflow-auto px-4 md:px-6">
+          <main className="flex min-h-0 flex-1 flex-col overflow-auto bg-[#F4F4F5] px-4 md:px-6">
             {stage === "upload" && (
               <UploadScreen onStart={handleStart} uploadProgress={uploadProgress} />
             )}

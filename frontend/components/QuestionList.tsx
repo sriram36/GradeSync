@@ -63,39 +63,18 @@ export function QuestionList({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-[var(--color-border)] p-4">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">
-            Extracted Questions{" "}
-            <span className="font-normal text-[var(--color-text-muted)]">(from question paper)</span>
-          </h2>
-          <button
-            type="button"
-            onClick={() => setExpandAll((v) => !v)}
-            className="shrink-0 text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-          >
-            {expandAll ? "Collapse All" : "Expand All"}
-          </button>
-        </div>
-        <div className="mt-3 flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5">
-          <Search size={14} className="text-[var(--color-text-muted)]" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search questions"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--color-text-muted)]"
-          />
-        </div>
-
-        <div className="mt-3 flex items-center justify-between rounded-lg bg-[var(--color-bg)] px-3 py-2 text-xs">
-          <span className="text-[var(--color-text-muted)]">
-            {answeredCount}/{job.questions.length} answered
-          </span>
-          <span className="font-semibold">
-            Total: {job.total_awarded % 1 === 0 ? job.total_awarded : job.total_awarded.toFixed(1)}/
-            {job.total_max % 1 === 0 ? job.total_max : job.total_max.toFixed(1)}
-          </span>
-        </div>
+      <div className="flex items-center justify-between gap-2 p-4 pb-2">
+        <h2 className="text-sm font-bold text-[var(--color-text)]">
+          Extracted Questions{" "}
+          <span className="font-normal text-[var(--color-text-muted)]">(from question paper)</span>
+        </h2>
+        <button
+          type="button"
+          onClick={() => setExpandAll((v) => !v)}
+          className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[var(--color-text)] shadow-sm border border-[var(--color-border)] hover:bg-gray-50"
+        >
+          {expandAll ? "Collapse All" : "Expand All"}
+        </button>
       </div>
 
       <div className="flex-1 space-y-1 overflow-y-auto p-2">

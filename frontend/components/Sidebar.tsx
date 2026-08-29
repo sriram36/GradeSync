@@ -28,28 +28,30 @@ export function Sidebar({
 }) {
   if (collapsed) {
     return (
-      <aside className="hidden md:flex w-16 shrink-0 flex-col items-center gap-3 border-r border-[var(--color-border)] bg-[var(--color-surface)] py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-text)] text-white font-semibold">
+      <aside className="hidden md:flex w-14 shrink-0 flex-col items-center gap-4 rounded-[20px] bg-white py-5 shadow-sm m-4 mb-4 mr-0 z-10">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#1a1a1f] text-white font-bold text-lg shadow-sm">
           V
         </div>
+        <div className="h-[1px] w-8 bg-[var(--color-border)]" />
         <button
           type="button"
           onClick={onToggle}
           aria-label="Expand sidebar"
-          className="mt-1 grid h-9 w-9 place-items-center rounded-lg bg-[var(--color-text)] text-white"
+          className="grid h-10 w-10 place-items-center rounded-full bg-[#1a1a1f] text-white shadow-md hover:bg-black"
         >
-          <Sparkle size={16} className="text-[var(--color-accent)]" />
+          <Sparkle size={18} className="text-[#ff6b4a]" />
         </button>
-        <div className="mt-2 flex flex-col items-center gap-3 text-[var(--color-text-muted)]">
+        <div className="h-[1px] w-8 bg-[var(--color-border)]" />
+        <div className="flex flex-col items-center gap-3 text-[#6b6b76]">
           {NAV_ITEMS.map(({ label, icon: Icon, active }) => (
             <div
               key={label}
               title={label}
-              className={`grid h-9 w-9 place-items-center rounded-lg ${
-                active ? "bg-[var(--color-bg)] text-[var(--color-text)]" : ""
+              className={`grid h-10 w-10 place-items-center rounded-[12px] ${
+                active ? "bg-[#e5fcf4] text-[#1e8e3e]" : "hover:bg-gray-100 hover:text-gray-900"
               }`}
             >
-              <Icon size={17} strokeWidth={2} />
+              <Icon size={20} strokeWidth={2} />
             </div>
           ))}
         </div>

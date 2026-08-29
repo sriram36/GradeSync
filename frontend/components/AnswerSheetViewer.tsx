@@ -49,62 +49,56 @@ export function AnswerSheetViewer({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex justify-center p-4 bg-[var(--color-bg)]">
-        <div className="flex w-full items-center justify-between rounded-xl bg-[#303033] px-3 py-2 text-white">
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              aria-label="Zoom out"
-              onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
-              className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10"
-            >
-              <Minus size={14} />
-            </button>
-            <span className="w-12 text-center text-xs font-semibold">{zoom}%</span>
-            <button
-              type="button"
-              aria-label="Zoom in"
-              onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
-              className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10"
-            >
-              <Plus size={14} />
-            </button>
-          </div>
+      <div className="flex p-4 bg-[var(--color-bg)] pb-0">
+        <div className="flex w-full items-center justify-between rounded-t-xl bg-[#303033] px-4 py-2.5 text-white">
+          <div className="text-sm font-semibold">Answer Sheet</div>
 
-          {pages.length > 1 && (
-            <div className="flex flex-1 items-center justify-center gap-1 text-xs">
+          <div className="flex flex-1 items-center justify-end gap-3 text-xs">
+            <div className="flex items-center rounded-lg bg-[#4b4b4b]/50 px-1 py-0.5">
               <button
                 type="button"
-                aria-label="Previous page"
-                disabled={pageIndex === 0}
-                onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-                className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10 disabled:opacity-30"
+                aria-label="Zoom out"
+                onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
+                className="grid h-6 w-6 place-items-center rounded-md hover:bg-white/10"
               >
-                <ChevronLeft size={16} />
+                <Minus size={13} />
               </button>
-              <span className="whitespace-nowrap font-medium">
-                Page {pageIndex + 1} of {pages.length}
-              </span>
+              <span className="w-11 text-center font-medium">{zoom}%</span>
               <button
                 type="button"
-                aria-label="Next page"
-                disabled={pageIndex === pages.length - 1}
-                onClick={() => setPageIndex((p) => Math.min(pages.length - 1, p + 1))}
-                className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10 disabled:opacity-30"
+                aria-label="Zoom in"
+                onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
+                className="grid h-6 w-6 place-items-center rounded-md hover:bg-white/10"
               >
-                <ChevronRight size={16} />
+                <Plus size={13} />
               </button>
             </div>
-          )}
 
-          <div className="flex items-center">
-            <button
-              type="button"
-              aria-label="Maximize"
-              className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10"
-            >
-              <Maximize size={14} />
-            </button>
+            {pages.length > 1 && (
+              <div className="flex items-center rounded-lg bg-[#4b4b4b]/50 px-1 py-0.5">
+                <button
+                  type="button"
+                  aria-label="Previous page"
+                  disabled={pageIndex === 0}
+                  onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+                  className="grid h-6 w-6 place-items-center rounded-md hover:bg-white/10 disabled:opacity-30"
+                >
+                  <ChevronLeft size={14} />
+                </button>
+                <span className="px-2 font-medium">
+                  Page {pageIndex + 1} of {pages.length}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Next page"
+                  disabled={pageIndex === pages.length - 1}
+                  onClick={() => setPageIndex((p) => Math.min(pages.length - 1, p + 1))}
+                  className="grid h-6 w-6 place-items-center rounded-md hover:bg-white/10 disabled:opacity-30"
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

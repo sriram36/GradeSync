@@ -56,8 +56,8 @@ export function MappingScreen({ job }: { job: JobResult }) {
         </div>
       </div>
 
-      <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-        <div className={`min-h-0 overflow-hidden border-[var(--color-border)] md:border-r ${mobileTab === "questions" ? "block" : "hidden md:block"}`}>
+      <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2 gap-4">
+        <div className={`min-h-0 overflow-hidden ${mobileTab === "questions" ? "block" : "hidden md:block"}`}>
           <QuestionList
             job={job}
             activeId={selection?.id ?? null}
