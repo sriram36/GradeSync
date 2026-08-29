@@ -86,11 +86,15 @@ def test_full_pipeline(client, sample_pdf_bytes):
             "answer_sheet": ("ans.pdf", sample_pdf_bytes, "application/pdf"),
         },
     )
+    import time
     assert resp.status_code == 200
     job_id = resp.json()["job_id"]
-    assert resp.json()["status"] == "done"
+    assert resp.json()["status"] == "processing"
 
     result = client.get(f"/api/jobs/{job_id}").json()
+    while result["status"] == "processing":
+        time.sleep(0.1)
+        result = client.get(f"/api/jobs/{job_id}").json()
 
     assert result["status"] == "done"
     assert len(result["questions"]) == 2
@@ -110,7 +114,7 @@ def test_full_pipeline(client, sample_pdf_bytes):
     assert result["total_max"] == 7
 
 
-def test_page_image_is_served_as_png(client, sample_pdf_bytes):
+def test_page_image_is_served_as_jpeg(client, sample_pdf_bytes):
     resp = client.post(
         "/api/jobs",
         files={
@@ -118,15 +122,19 @@ def test_page_image_is_served_as_png(client, sample_pdf_bytes):
             "answer_sheet": ("ans.pdf", sample_pdf_bytes, "application/pdf"),
         },
     )
+    import time
     job_id = resp.json()["job_id"]
     result = client.get(f"/api/jobs/{job_id}").json()
+    while result["status"] == "processing":
+        time.sleep(0.1)
+        result = client.get(f"/api/jobs/{job_id}").json()
 
     page_url = result["question_paper_pages"][0]["url"]
     page_resp = client.get(page_url)
 
     assert page_resp.status_code == 200
-    assert page_resp.headers["content-type"] == "image/png"
-    assert page_resp.content[:8] == b"\x89PNG\r\n\x1a\n"
+    assert page_resp.headers["content-type"] == "image/jpeg"
+    assert page_resp.content[:2] == b"\xff\xd8"
 
 
 def test_missing_job_returns_404(client):

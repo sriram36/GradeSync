@@ -7,9 +7,7 @@ import { UploadScreen } from "@/components/UploadScreen";
 import { ExtractingScreen } from "@/components/ExtractingScreen";
 import { MappingScreen } from "@/components/MappingScreen";
 import { createJob, getJob } from "@/lib/api";
-import type { JobResult, JobStatus } from "@/lib/types";
-
-type Stage = "upload" | "extracting" | "mapping" | "error";
+import type { JobResult } from "@/lib/types";
 
 export default function Home() {
   const [stage, setStage] = useState<"upload" | "extracting" | "mapping" | "error">("upload");
@@ -26,7 +24,7 @@ export default function Home() {
   // Ping the backend immediately on load to wake up the free tier server
   // (e.g. Render/Railway cold starts) before the user even hits upload.
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/health`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000"}/api/health`)
       .catch(() => {}); // silent catch, it's just a wakeup ping
   }, []);
 
@@ -112,7 +110,7 @@ export default function Home() {
                   {isRenderError && (
                     <div className="mt-1 max-w-md rounded-xl border border-orange-200 bg-orange-50 p-4 text-left text-xs text-orange-800">
                       <span className="mb-1 block font-semibold text-orange-900">💡 Free Tier Tip</span>
-                      This backend is hosted on Render's free tier (500MB memory limit). To fix this:
+                      This backend is hosted on Render&apos;s free tier (500MB memory limit). To fix this:
                       <ul className="mt-1 list-disc pl-4 space-y-1">
                         <li>Compress your PDF using <b>ilovepdf.com</b> or <b>smallpdf.com</b> before uploading</li>
                         <li>Try uploading a smaller sample (1–3 pages)</li>

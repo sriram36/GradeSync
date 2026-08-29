@@ -12,18 +12,12 @@ export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; 
         className="flex items-center gap-2 text-sm text-[var(--color-text-muted)] disabled:cursor-default"
       >
         {onBack && <ArrowLeft size={16} />}
-        {onBack ? (
-          <span className="flex items-center gap-1.5 font-medium text-[var(--color-text)]">
-            {breadcrumb}
-          </span>
-        ) : (
-          <>
-            <span className="hidden items-center gap-1.5 font-semibold text-[var(--color-text)] md:flex">
-              {breadcrumb}
-            </span>
-            <span className="text-base font-semibold text-[var(--color-text)] md:hidden">VedaAI</span>
-          </>
-        )}
+        <span className="hidden items-center gap-1.5 font-semibold text-[var(--color-text)] md:flex">
+          {breadcrumb}
+        </span>
+        <span className="text-base font-semibold text-[var(--color-text)] md:hidden">
+          VedaAI
+        </span>
       </button>
 
       <div className="flex items-center gap-1 text-[var(--color-text-muted)] sm:gap-2">

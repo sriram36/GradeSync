@@ -18,11 +18,10 @@ from .models import JobResult, PageImage, JobStatus
 
 app = FastAPI(title="VedaAI Assessment Mapper")
 
-origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -54,15 +53,9 @@ def _process_job(job_id: str, qp_bytes: bytes, qp_name: str, as_bytes: bytes, as
 
         import concurrent.futures
         import gc
-        gc.collect()  # Force garbage collection before parallel spike
-
         storage.update_job(job_id, stage="extracting_questions")
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-            future_questions = executor.submit(pipeline.extract_questions, provider, qp_images)
-            future_answers = executor.submit(pipeline.extract_answers, provider, as_images)
-            
-            questions = future_questions.result()
-            answers = future_answers.result()
+        questions = pipeline.extract_questions(provider, qp_images)
+        answers = pipeline.extract_answers(provider, as_images)
 
         del qp_images
         del as_images

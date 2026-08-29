@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, X, FileText, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { estimatePdfPageCount } from "@/lib/pdfPageCount";
 
 const ACCEPT = ".pdf,.png,.jpg,.jpeg";

@@ -3,7 +3,6 @@
 import { ChevronDown, TriangleAlert } from "lucide-react";
 import type { Grade, Mapping, Question } from "@/lib/types";
 import { formatMarks, marksTone, toneClasses } from "@/lib/grading";
-import { Sparkle } from "./Sparkle";
 
 export function QuestionRow({
   question,

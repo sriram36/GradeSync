@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Minus, Plus, ChevronLeft, ChevronRight, Maximize } from "lucide-react";
+import { Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import type { BBox, PageImage } from "@/lib/types";
 import { pageImageUrl } from "@/lib/api";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, CircleHelp } from "lucide-react";
+import { CircleHelp } from "lucide-react";
 import type { AnswerBlock, Grade, JobResult, Question } from "@/lib/types";
 import { QuestionRow } from "./QuestionRow";
 
@@ -29,7 +29,7 @@ export function QuestionList({
   onSelectQuestion: (id: string) => void;
   onSelectUnmatched: (id: string) => void;
 }) {
-  const [query, setQuery] = useState("");
+
   const [expandAll, setExpandAll] = useState(false);
 
   const gradeByQ = useMemo(() => {
@@ -55,26 +55,29 @@ export function QuestionList({
 
   const questions = job.questions
     .slice()
-    .sort((a, b) => a.order_index - b.order_index)
-    .filter((q) => q.text.toLowerCase().includes(query.toLowerCase()) || q.display_label.includes(query));
+    .sort((a, b) => a.order_index - b.order_index);
 
   const groups = groupByNumber(questions);
   const answeredCount = job.mappings.filter((m) => m.status !== "unanswered").length;
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between gap-2 p-4 pb-2">
-        <h2 className="text-sm font-bold text-[var(--color-text)]">
-          Extracted Questions{" "}
-          <span className="font-normal text-[var(--color-text-muted)]">(from question paper)</span>
-        </h2>
-        <button
-          type="button"
-          onClick={() => setExpandAll((v) => !v)}
-          className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[var(--color-text)] shadow-sm border border-[var(--color-border)] hover:bg-gray-50"
-        >
-          {expandAll ? "Collapse All" : "Expand All"}
-        </button>
+      <div className="flex flex-col gap-2 p-4 pb-2">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-sm font-bold text-[var(--color-text)]">
+            Extracted Questions{" "}
+          </h2>
+          <button
+            type="button"
+            onClick={() => setExpandAll((v) => !v)}
+            className="shrink-0 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[var(--color-text)] shadow-sm border border-[var(--color-border)] hover:bg-gray-50"
+          >
+            {expandAll ? "Collapse All" : "Expand All"}
+          </button>
+        </div>
+        <p className="text-xs font-medium text-[var(--color-text-muted)]">
+          {answeredCount} of {questions.length} answered • {job.total_awarded}/{job.total_max} marks
+        </p>
       </div>
 
       <div className="flex-1 space-y-1 overflow-y-auto p-2">

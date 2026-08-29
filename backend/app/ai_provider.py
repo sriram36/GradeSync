@@ -37,6 +37,8 @@ class AIProvider:
 class GeminiProvider(AIProvider):
     def __init__(self):
         import google.generativeai as genai
+        import threading
+        self.lock = threading.Lock()
         
         # Load multiple keys if provided, else fallback to single key
         keys_str = os.environ.get("GEMINI_API_KEYS", os.environ.get("GEMINI_API_KEY", ""))
@@ -52,11 +54,12 @@ class GeminiProvider(AIProvider):
         self._configure_current_key()
 
     def _configure_current_key(self):
-        self._genai.configure(api_key=self.keys[self.current_key_idx])
-        self._model = self._genai.GenerativeModel(
-            self._model_name,
-            generation_config={"response_mime_type": "application/json"},
-        )
+        with self.lock:
+            self._genai.configure(api_key=self.keys[self.current_key_idx])
+            self._model = self._genai.GenerativeModel(
+                self._model_name,
+                generation_config={"response_mime_type": "application/json"},
+            )
 
     def generate_json(self, system_prompt: str, user_prompt: str,
                        images: Optional[List[Dict[str, Any]]] = None) -> dict:
@@ -68,32 +71,22 @@ class GeminiProvider(AIProvider):
             parts.append({"mime_type": img["mime_type"], "data": img["bytes"]})
             
         retry_504 = 0
-        while self.current_key_idx < len(self.keys):
+        keys_tried = 0
+        
+        while keys_tried < len(self.keys):
             try:
                 response = self._model.generate_content(parts)
                 return _extract_json(response.text)
-            except ResourceExhausted:
-                # 429 Quota Exceeded / Rate Limit reached for this key.
-                print(f"[WARN] API Key at index {self.current_key_idx} exhausted. Rotating...")
-                self.current_key_idx += 1
-                if self.current_key_idx < len(self.keys):
-                    self._configure_current_key()
-                    time.sleep(1) # tiny backoff before retry
-                    continue
-                else:
-                    raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
             except Exception as e:
                 error_str = str(e)
-                # Also catch generic 429 in case google-generativeai wraps it weirdly
-                if "429" in error_str:
-                    print(f"[WARN] API Key at index {self.current_key_idx} exhausted (generic 429). Rotating...")
-                    self.current_key_idx += 1
-                    if self.current_key_idx < len(self.keys):
-                        self._configure_current_key()
-                        time.sleep(1)
-                        continue
-                    else:
-                        raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
+                # Catch 429 Resource Exhausted (Quota/Rate Limit)
+                if "429" in error_str or "ResourceExhausted" in error_str:
+                    print(f"[WARN] API Key at index {self.current_key_idx} exhausted (429). Rotating...")
+                    self.current_key_idx = (self.current_key_idx + 1) % len(self.keys)
+                    self._configure_current_key()
+                    keys_tried += 1
+                    time.sleep(2)
+                    continue
                 # Catch 504 Deadline Exceeded (Google servers overloaded)
                 elif "504" in error_str or "Deadline" in error_str:
                     retry_504 += 1
@@ -105,7 +98,7 @@ class GeminiProvider(AIProvider):
                     
                 raise e # For all other errors, bubble up to main.py
         
-        raise Exception("All API keys have exceeded their rate limits (Error 429). Please try again later.")
+        raise Exception("API Rate Limit Exceeded (429). All AI keys are currently exhausted. Please wait a moment and try again.")
 
 
 class AzureOpenAIProvider(AIProvider):
