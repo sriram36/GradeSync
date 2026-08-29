@@ -85,7 +85,9 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-[var(--color-bg)]">
-      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setManualCollapsed(!sidebarCollapsed)} />
+      {stage === "upload" && (
+        <Sidebar collapsed={sidebarCollapsed} onToggle={() => setManualCollapsed(!sidebarCollapsed)} />
+      )}
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar onBack={stage !== "upload" ? reset : undefined} />
 

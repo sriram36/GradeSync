@@ -5,10 +5,9 @@ import {
   MonitorPlay,
   ClipboardList,
   FileCheck2,
-  History,
+  Folder,
   Settings,
   PanelLeftClose,
-  School,
 } from "lucide-react";
 import { Sparkle } from "./Sparkle";
 
@@ -17,7 +16,7 @@ const NAV_ITEMS = [
   { label: "My Classroom", icon: MonitorPlay, active: false },
   { label: "Assignments", icon: ClipboardList, active: false },
   { label: "Exams", icon: FileCheck2, active: true },
-  { label: "My Library", icon: History, active: false },
+  { label: "My Library", icon: Folder, active: false },
 ];
 
 export function Sidebar({
@@ -117,8 +116,8 @@ export function Sidebar({
       </button>
 
       <div className="mt-3 flex items-center gap-3 rounded-xl bg-[var(--color-bg)] px-3 py-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-success)] shadow-sm">
-          <School size={16} strokeWidth={2} />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1c4ed8] text-white font-bold text-sm shadow-sm">
+          D
         </div>
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-[var(--color-text)]">Delhi Public School</p>

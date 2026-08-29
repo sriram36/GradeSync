@@ -12,14 +12,21 @@ export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; 
         disabled={!onBack}
         className="flex items-center gap-2 text-sm text-[var(--color-text-muted)] disabled:cursor-default"
       >
-        <ArrowLeft size={16} />
-        {/* Desktop: page breadcrumb (logo already lives in the sidebar) */}
-        <span className="hidden items-center gap-1.5 md:flex">
-          <ClipboardList size={14} />
-          {breadcrumb}
-        </span>
-        {/* Mobile: brand name (no sidebar visible to carry it) */}
-        <span className="text-base font-semibold text-[var(--color-text)] md:hidden">VedaAI</span>
+        {onBack && <ArrowLeft size={16} />}
+        {onBack ? (
+          <span className="flex items-center gap-1.5 font-medium text-[var(--color-text)]">
+            <ClipboardList size={14} />
+            {breadcrumb}
+          </span>
+        ) : (
+          <>
+            <span className="hidden items-center gap-1.5 md:flex">
+              <ClipboardList size={14} />
+              {breadcrumb}
+            </span>
+            <span className="text-base font-semibold text-[var(--color-text)] md:hidden">VedaAI</span>
+          </>
+        )}
       </button>
 
       <div className="flex items-center gap-1 text-[var(--color-text-muted)] sm:gap-2">
