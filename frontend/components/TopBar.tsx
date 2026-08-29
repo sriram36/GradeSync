@@ -34,10 +34,10 @@ export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; 
           <Sparkle size={17} />
         </button>
         <button type="button" className="flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2 hover:bg-[var(--color-bg)] sm:pl-1.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-purple-soft)] text-xs font-semibold text-[var(--color-purple)]">
-            SK
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 overflow-hidden">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" className="h-full w-full object-cover" />
           </div>
-          <span className="hidden text-sm font-medium text-[var(--color-text)] sm:inline">Sriram Kolli</span>
+          <span className="hidden text-sm font-medium text-[var(--color-text)] sm:inline">Madhur Rastogi</span>
           <ChevronDown size={14} className="hidden sm:inline" />
         </button>
         {/* Mobile: hamburger for the nav drawer (nav lives in the sidebar on desktop) */}

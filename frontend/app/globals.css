@@ -45,11 +45,11 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d8d7dd;
+  background: #c3c2c8;
   border-radius: 999px;
 }
 

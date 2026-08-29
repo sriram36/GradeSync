@@ -100,26 +100,8 @@ export function QuestionList({
 
       <div className="flex-1 space-y-1 overflow-y-auto p-2">
         {groups.map((group) => {
-          const hasSubParts = group.length > 1 || !!group[0].sub_part;
-          if (!hasSubParts) {
-            const q = group[0];
-            return (
-              <QuestionRow
-                key={q.id}
-                question={q}
-                grade={gradeByQ.get(q.id)}
-                mapping={mappingByQ.get(q.id)}
-                expanded={expandAll || activeId === q.id}
-                active={activeId === q.id}
-                onSelect={() => onSelectQuestion(q.id)}
-              />
-            );
-          }
           return (
-            <div key={group[0].number} className="space-y-1">
-              <p className="px-3 pt-2 text-xs font-semibold text-[var(--color-text-muted)]">
-                {group[0].number}
-              </p>
+            <div key={group[0].number}>
               {group.map((q) => (
                 <QuestionRow
                   key={q.id}
@@ -129,8 +111,8 @@ export function QuestionList({
                   expanded={expandAll || activeId === q.id}
                   active={activeId === q.id}
                   onSelect={() => onSelectQuestion(q.id)}
-                  badgeLabel={q.sub_part ? `${q.sub_part}.` : q.display_label}
-                  indent
+                  badgeLabel={q.sub_part ? `${q.sub_part}.` : undefined}
+                  indent={!!q.sub_part}
                 />
               ))}
             </div>

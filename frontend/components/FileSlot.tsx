@@ -45,7 +45,7 @@ export function FileSlot({
             isPdf ? "bg-[var(--color-error)]" : "bg-[var(--color-purple)]"
           }`}
         >
-          {isPdf ? <FileText size={18} /> : <ImageIcon size={18} />}
+          {isPdf ? <span className="text-[10px] font-bold">PDF</span> : <ImageIcon size={18} />}
         </div>
         <div className="min-w-0 flex-1 text-left">
           <p className="truncate text-sm font-medium">{slot.file.name}</p>

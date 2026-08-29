@@ -44,10 +44,10 @@ export function MappingScreen({ job }: { job: JobResult }) {
               key={tab}
               type="button"
               onClick={() => setMobileTab(tab)}
-              className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-[20px] py-2.5 text-sm font-semibold transition-colors ${
                 mobileTab === tab
-                  ? "bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm"
-                  : "text-[var(--color-text-muted)]"
+                  ? "bg-[#303033] text-white shadow-sm"
+                  : "text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
               }`}
             >
               {tab === "questions" ? "Questions" : "Answer Sheet"}

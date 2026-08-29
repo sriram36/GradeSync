@@ -49,26 +49,25 @@ export function AnswerSheetViewer({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
-        <h2 className="text-sm font-semibold">Answer Sheet</h2>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] px-1 py-1">
+      <div className="flex justify-center p-4 bg-[var(--color-bg)]">
+        <div className="flex w-full items-center justify-between rounded-xl bg-[#303033] px-3 py-2 text-white">
+          <div className="flex items-center gap-1">
             <button
               type="button"
               aria-label="Zoom out"
               onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
-              className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+              className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10"
             >
-              <Minus size={13} />
+              <Minus size={14} />
             </button>
-            <span className="w-10 text-center text-xs font-medium">{zoom}%</span>
+            <span className="w-12 text-center text-xs font-semibold">{zoom}%</span>
             <button
               type="button"
               aria-label="Zoom in"
               onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
-              className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+              className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10"
             >
-              <Plus size={13} />
+              <Plus size={14} />
             </button>
           </div>
 
@@ -79,9 +78,9 @@ export function AnswerSheetViewer({
                 aria-label="Previous page"
                 disabled={pageIndex === 0}
                 onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-                className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)] disabled:opacity-30"
+                className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10 disabled:opacity-30"
               >
-                <ChevronLeft size={15} />
+                <ChevronLeft size={16} />
               </button>
               <span className="whitespace-nowrap font-medium">
                 Page {pageIndex + 1} of {pages.length}
@@ -91,9 +90,9 @@ export function AnswerSheetViewer({
                 aria-label="Next page"
                 disabled={pageIndex === pages.length - 1}
                 onClick={() => setPageIndex((p) => Math.min(pages.length - 1, p + 1))}
-                className="grid h-6 w-6 place-items-center rounded-md text-[var(--color-text-muted)] hover:bg-[var(--color-bg)] disabled:opacity-30"
+                className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10 disabled:opacity-30"
               >
-                <ChevronRight size={15} />
+                <ChevronRight size={16} />
               </button>
             </div>
           )}
@@ -113,7 +112,7 @@ export function AnswerSheetViewer({
               {boxesOnPage.map((b, i) => (
                 <div
                   key={i}
-                  className="absolute rounded-sm border-2 border-[var(--color-purple)] bg-[var(--color-purple)]/10"
+                  className="absolute rounded-sm border-2 border-[var(--color-success)] bg-[var(--color-success)]/10"
                   style={{
                     left: `${b.x * 100}%`,
                     top: `${b.y * 100}%`,
@@ -122,7 +121,7 @@ export function AnswerSheetViewer({
                   }}
                 >
                   {label && (
-                    <span className="absolute -top-6 left-0 rounded-md bg-[var(--color-purple)] px-1.5 py-0.5 text-[11px] font-semibold text-white">
+                    <span className="absolute -top-6 left-0 rounded-md bg-[var(--color-success)] px-1.5 py-0.5 text-[11px] font-semibold text-white">
                       {label}
                     </span>
                   )}

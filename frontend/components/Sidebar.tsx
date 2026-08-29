@@ -116,13 +116,13 @@ export function Sidebar({
         Settings
       </button>
 
-      <div className="mt-3 flex items-center gap-2 rounded-xl border border-[var(--color-border)] px-3 py-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-success-soft)] text-[var(--color-success)]">
+      <div className="mt-3 flex items-center gap-3 rounded-xl bg-[var(--color-bg)] px-3 py-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-success)] shadow-sm">
           <School size={16} strokeWidth={2} />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-xs font-medium">VedaAI Academy</p>
-          <p className="truncate text-[11px] text-[var(--color-text-muted)]">HQ</p>
+          <p className="truncate text-xs font-semibold text-[var(--color-text)]">Delhi Public School</p>
+          <p className="truncate text-[11px] text-[var(--color-text-muted)]">Bokaro Steel City</p>
         </div>
       </div>
     </aside>

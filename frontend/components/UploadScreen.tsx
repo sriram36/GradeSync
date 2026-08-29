@@ -29,7 +29,7 @@ export function UploadScreen({
       <div className="mx-auto w-full max-w-xl text-center">
         <h1 className="text-xl font-bold leading-snug md:text-2xl">
           Upload{" "}
-          <span className="inline-block rounded-lg bg-[var(--color-accent-soft)] px-1.5 py-0.5 text-[var(--color-accent)] underline decoration-2 underline-offset-4">
+          <span className="inline-block rounded-xl bg-[#fff1ec] px-3 py-1 text-[#ff6b4a]">
             Question Paper &amp; Answer Sheets
           </span>
         </h1>
