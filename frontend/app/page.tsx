@@ -7,7 +7,7 @@ import { UploadScreen } from "@/components/UploadScreen";
 import { ExtractingScreen } from "@/components/ExtractingScreen";
 import { MappingScreen } from "@/components/MappingScreen";
 import { createJob, getJob } from "@/lib/api";
-import { JobResult, JobStatus } from "@/lib/api";
+import type { JobResult, JobStatus } from "@/lib/types";
 
 type Stage = "upload" | "extracting" | "mapping" | "error";
 
