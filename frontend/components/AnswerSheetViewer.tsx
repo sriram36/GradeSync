@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Minus, Plus, ChevronLeft, ChevronRight, Maximize } from "lucide-react";
 import type { BBox, PageImage } from "@/lib/types";
 import { pageImageUrl } from "@/lib/api";
 
@@ -72,7 +72,7 @@ export function AnswerSheetViewer({
           </div>
 
           {pages.length > 1 && (
-            <div className="flex items-center gap-1 text-xs">
+            <div className="flex flex-1 items-center justify-center gap-1 text-xs">
               <button
                 type="button"
                 aria-label="Previous page"
@@ -96,6 +96,16 @@ export function AnswerSheetViewer({
               </button>
             </div>
           )}
+
+          <div className="flex items-center">
+            <button
+              type="button"
+              aria-label="Maximize"
+              className="grid h-7 w-7 place-items-center rounded-lg hover:bg-white/10"
+            >
+              <Maximize size={14} />
+            </button>
+          </div>
         </div>
       </div>
 

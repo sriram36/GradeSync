@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowLeft, ClipboardList, CircleHelp, Bell, ChevronDown, Menu } from "lucide-react";
-import { Sparkle } from "./Sparkle";
+import { ArrowLeft, Headset, Bell, ChevronDown, Menu } from "lucide-react";
 
 export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; breadcrumb?: string }) {
   return (
@@ -15,13 +14,11 @@ export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; 
         {onBack && <ArrowLeft size={16} />}
         {onBack ? (
           <span className="flex items-center gap-1.5 font-medium text-[var(--color-text)]">
-            <ClipboardList size={14} />
             {breadcrumb}
           </span>
         ) : (
           <>
-            <span className="hidden items-center gap-1.5 md:flex">
-              <ClipboardList size={14} />
+            <span className="hidden items-center gap-1.5 font-semibold text-[var(--color-text)] md:flex">
               {breadcrumb}
             </span>
             <span className="text-base font-semibold text-[var(--color-text)] md:hidden">VedaAI</span>
@@ -30,15 +27,12 @@ export function TopBar({ onBack, breadcrumb = "Exams" }: { onBack?: () => void; 
       </button>
 
       <div className="flex items-center gap-1 text-[var(--color-text-muted)] sm:gap-2">
-        <button type="button" aria-label="Help" className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--color-bg)]">
-          <CircleHelp size={18} />
+        <button type="button" aria-label="Support" className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--color-bg)]">
+          <Headset size={18} />
         </button>
         <button type="button" aria-label="Notifications" className="relative grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--color-bg)]">
           <Bell size={18} />
           <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
-        </button>
-        <button type="button" aria-label="AI Toolkit" className="hidden h-8 w-8 place-items-center rounded-full text-[var(--color-text)] hover:bg-[var(--color-bg)] sm:grid">
-          <Sparkle size={17} />
         </button>
         <button type="button" className="flex items-center gap-1.5 rounded-full py-1 pl-1 pr-2 hover:bg-[var(--color-bg)] sm:pl-1.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 overflow-hidden">
